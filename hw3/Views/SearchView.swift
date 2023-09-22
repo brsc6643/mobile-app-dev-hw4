@@ -39,11 +39,11 @@ struct SearchView: View {
                 Text("Sweden!")
                     .font(.largeTitle)
                     .padding()
-                Button("Fetch Sweden Info"){
-                    Task{
-                        await getSwedenInfo() //not working properly at the moment, not sure why 
-                    }
-                }
+//                Button("Fetch Sweden Info"){
+//                    Task{
+//                        await getSwedenInfo() //not working properly at the moment, not sure why
+//                    }
+//                }
             }
              //use the await keyword to grab info from a specific country by calling a different function
         }

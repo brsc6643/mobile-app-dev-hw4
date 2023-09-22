@@ -13,7 +13,7 @@ struct ContentView: View {
             
             NavigationView() {
                 NavigationLink(destination: SearchView()) {
-                    Text("Search").padding().background(Color.accentColor)
+                    Text("Country of the Day").padding().background(Color.accentColor)
                         .foregroundColor(.white)
                 }
                 .navigationBarTitle("Home Page", displayMode: .inline)
