@@ -1,5 +1,22 @@
 import SwiftUI
 
+
+//lecture notes
+///
+///
+///
+struct Person: Codable {
+    var name: String
+}
+
+struct ClassRoom: Codable {
+    var classmates: [Person]
+    
+    var firstClassMate: Person {
+        return classmates[0]
+    }
+}
+
 struct ContentView: View {
     @State var switched: Bool = false
     @State private var showingSheet = false
@@ -11,13 +28,13 @@ struct ContentView: View {
     var body: some View {
         VStack{
             
-            NavigationView() {
-                NavigationLink(destination: SearchView()) {
-                    Text("Country of the Day").padding().background(Color.accentColor)
-                        .foregroundColor(.white)
-                }
-                .navigationBarTitle("Home Page", displayMode: .inline)
-            }
+//            NavigationView() {
+////                NavigationLink(destination: SearchView()) {
+////                    Text("Country of the Day").padding().background(Color.accentColor)
+////                        .foregroundColor(.white)
+////                }
+//                .navigationBarTitle("Home Page", displayMode: .inline)
+//            }
             
             VStack {
                 HStack {
@@ -39,17 +56,34 @@ struct ContentView: View {
                 }
                 .padding()
                 
-                Circle()
-                    .fill(Color.accentColor)
-                    .frame(width: 150, height: 150)
-                    .overlay(
-                        Text("Let's get started!")
-                            .font(.title)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white))
+                HStack {
+                    Image(systemName: "globe.americas.fill")
+                        .imageScale(.large)
+                    Text("CountryFinder")
+                }
+                .font(.title)
+                .foregroundColor(.accentColor)
                 
-                Text("Tap something to interact with the app.")
+                VStack {
+                    HStack {
+                        Image(systemName: "person")
+                            .imageScale(.large)
+                            .foregroundColor(.accentColor)
+                        Image(systemName: "person")
+                            .imageScale(.large)
+                            .foregroundColor(.accentColor)
+                        Image(systemName: "person")
+                            .imageScale(.large)
+                            .foregroundColor(.accentColor)
+                        Image(systemName: "person")
+                            .imageScale(.large)
+                            .foregroundColor(.accentColor)
+                        Image(systemName: "person")
+                            .imageScale(.large)
+                            .foregroundColor(.accentColor)
+                    }
                     .padding()
+                }
                 
                 Toggle("", isOn: $switched)
                     .foregroundColor(Color.accentColor)
@@ -64,6 +98,9 @@ struct ContentView: View {
                 Button("Display Countries") {
                     showingSheet.toggle()
                 }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .frame(height: 100)
                 .sheet(isPresented: $showingSheet) {
                     CountriesView()
                 }

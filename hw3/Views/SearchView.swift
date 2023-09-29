@@ -5,56 +5,60 @@
 //  Created by Broderick Ryan Schmidt on 9/15/23.
 //
 
-import Foundation
 import SwiftUI
-
-
-func getSwedenInfo() async -> () {
-    do {
-        let url = URL(string: "https://restcountries.com/v3.1/name/sweden")!
-        let (data, _) = try await URLSession.shared.data(from: url)
-        let sweden = try JSONDecoder().decode([Country].self, from: data)
-        if let swedenInfo = sweden.first {
-            print("Sweden Info:")
-            print("Common Name: \(swedenInfo.name.common)")
-            print("Official Name: \(swedenInfo.name.official)")
-            if let capital = swedenInfo.capital?.first {
-                print("Capital: \(capital)")
+ 
+struct CountrySearchView: View {
+    @Binding var countries: [Country]
+    @State private var searchText = ""
+   
+    var filteredCountries: [Country] {
+        if searchText.isEmpty {
+            return countries
+        } else {
+            return countries.filter { country in
+                // You can customize the search criteria here.
+                let commonNameContains = country.name.common.localizedCaseInsensitiveContains(searchText)
+                let officialNameContains = country.name.official.localizedCaseInsensitiveContains(searchText)
+                return commonNameContains || officialNameContains
             }
-            print("Flag: \(swedenInfo.flag)")
-            print("Population: \(swedenInfo.population)")
         }
-    } catch {
-        print("Error: \(error.localizedDescription)")
+    }
+   
+    var body: some View {
+        NavigationView {
+            VStack {
+                SearchBar(text: $searchText, placeholder: "Search Countries")
+               
+                List(filteredCountries) { country in
+                    NavigationLink(destination: CountryDetailView(country: country)) {
+                        VStack(alignment: .leading) {
+                            Text("\(country.flag) \(country.name.common)")
+                            Text("Official Name: \(country.name.official)")
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Search Countries")
+        }
     }
 }
  
-struct SearchView: View {
+struct SearchBar: View {
+    @Binding var text: String
+    var placeholder: String
+   
     var body: some View {
-        NavigationView{
-            VStack{
-                Text("Country of the Day is:")
-                    .font(.largeTitle)
-                    .padding()
-                Text("Sweden!")
-                    .font(.largeTitle)
-                    .padding()
-//                Button("Fetch Sweden Info"){
-//                    Task{
-//                        await getSwedenInfo() //not working properly at the moment, not sure why
-//                    }
-//                }
-            }
-             //use the await keyword to grab info from a specific country by calling a different function
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+           
+            TextField(placeholder, text: $text)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
         }
-    }
-    @MainActor
-    class UISearchBar : UIView{}
-}
-
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some
-    View {
-        SearchView()
+        .padding(8)
+        .background(Color(.systemGray5))
+        .cornerRadius(10)
+        .padding(.horizontal)
     }
 }

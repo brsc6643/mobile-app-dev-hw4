@@ -17,9 +17,13 @@ struct CountryDetailView: View {
             Text("Official Name: \(country.name.official)")
             Text("Capital: \(country.capital?.joined(separator: ", ") ?? "N/A")")
             Text("Population: \(country.population)")
-            Image(systemName: country.flag) // Assuming flag is a system image name
-                .resizable()
-                .frame(width: 50, height: 30)
+            Text(String("Car: \(country.car.side)"))
+//            if let currency = country.currencies {
+//                                    Text("Currency: \(currency.joined(separator: ", "))")
+//                                }
+//            Text(getLanguages(language: country.language!))
+//            Text("Translations: \(country.translations ?? "N/A")")
+            
         }
         .navigationTitle("Country Details")
     }
@@ -27,9 +31,10 @@ struct CountryDetailView: View {
  
 struct CountriesView: View {
     @Environment(\.dismiss) var dismiss
- 
+    
     @State var countries = [Country]()
     @State var selectedCountry: Country?
+    @State var isLoading = false
  
     func getAllCountries() async {
         do {
@@ -48,6 +53,10 @@ struct CountriesView: View {
  
     var body: some View {
         NavigationView {
+            //lecture notes
+            if isLoading {
+                Text("Loading...")
+            }
             VStack {
                 Text("Please browse the world's countries below.")
  
@@ -65,7 +74,15 @@ struct CountriesView: View {
                     }
                 }
                 .task {
+                    print("Running task.")
                     await getAllCountries()
+                    print("Completed task.")
+                }
+                if isLoading{
+                    ProgressView()
+                }
+                else {
+                    Text("Loading complete.").bold()
                 }
             }
             .sheet(item: $selectedCountry) { country in
@@ -75,6 +92,13 @@ struct CountriesView: View {
                 }
             }
             .navigationTitle("Countries")
+            .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                NavigationLink(destination: CountrySearchView(countries: $countries)) {
+                                    Image(systemName: "magnifyingglass")
+                                }
+                            }
+                        }
         }
     }
 }
@@ -86,8 +110,23 @@ struct Country: Codable, Identifiable {   //label the Country struct as codable 
     var capital: [String]?
     var flag: String
     var population: Int
+//    var currencies: [String]?
+//    var translations: Array<String>
+//    var language: [String: String]?
+    var car: Car
 }
 
+struct Car: Codable {
+    var side: String
+}
+
+//func getLanguages(language: [String: String]) -> String {
+//    var availableLanguages = ""
+//    for (key, value) in language {
+//        availableLanguages = ("\(availableLanguages) \(value)")
+//    }
+//    return availableLanguages
+//}
 struct CountryName: Codable {
     var common: String
     var official: String
